@@ -1,0 +1,26 @@
+b = signal.subsignal(610*360,650*360);
+[mu, deviation] = signal.statistics();
+muu = Signal();
+muu = muu.siggen(0,3,0.01);
+dev1 = Signal();
+dev1 = dev1.siggen(0,3,0.01);
+dev2 = Signal();
+dev2 = dev1.siggen(0,3,0.01);
+muu = muu+1;
+muu = muu.*mu;
+dev1 = dev1+1;
+dev1 = dev1.*(deviation*2);
+dev1 = dev1+mu;
+dev2 = dev2+1;
+dev2 = dev2.*(-deviation*2);
+dev2 = dev2+mu;
+b.represent;
+hold on;
+muu.represent;
+hold on;
+dev1.represent;
+hold on;
+dev2.represent;
+d=b.getRs();
+hold on
+d.represent();
