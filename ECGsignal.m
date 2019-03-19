@@ -13,7 +13,7 @@ classdef ECGsignal < Signal
             newsig = ECGsignal(newsig.signal, newsig.time);            
         end
                         
-        function signal = tachogram(obj)
+        function signal = tachogram(obj, type)
             rs = obj.getRs();
             signal = Signal();
             for i=2:length(rs.signal)
@@ -21,7 +21,13 @@ classdef ECGsignal < Signal
                 if bpm > 200
                     disp("Anomaly point at : "+num2str(rs.time(i))+" s");
                 else
-                    signal=signal.append(bpm,rs.time(i));
+                    if type=="time"
+                        signal=signal.append(bpm,rs.time(i));
+                    elseif type == "beat"
+                        signal=signal.append(bpm,i-1);
+                    else
+                        error("Bad type argument")
+                    end
                 end
             end             
         end
