@@ -1,0 +1,28 @@
+classdef Tacogram < Signal
+    % Class designed as a Signal subclass to handle tacogram functionality
+    % (inherits from Signal.m)
+    %
+    % Properties:
+    %   inherited from Signal
+    %   kind : references the kind of tacogram (if it's time or beat
+    %   driven).
+    %
+    % Methods (Subclass specific):
+    %
+    %   subsignal(start, fin) : modification of superclass method to
+    %   include kind in the returned object.
+    
+    properties
+        kind = ""
+    end
+    
+    methods   
+        function new = subsignal(obj, start, fin)
+            new = subsignal@Signal(obj,start,fin);
+            new.kind = obj.kind; 
+        end
+        
+        
+    end
+end
+

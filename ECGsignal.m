@@ -1,35 +1,48 @@
 classdef ECGsignal < Signal
-   
+   % Class designed as a Signal sublcass to handle specific ECG signals
+   % 
+   % Properties:
+   %    inherited from Signal
+   %
+   % Methods (Subclass specific):
+   %
+   %    tacogram () : returns a Tacogram object with the corresponding
+   %    tacogram generated as time or beat driven (defined by the user). It
+   %    also displays detected anomaly beats.
+   %
+   %    getRs () : returns a Signal object with the detected R peaks in the
+   %    signal.
     properties
     end
     
     methods
-        function obj = ECGsignal(signal, time)
-            obj@Signal(signal, time);            
-        end
-        
-        function newsig = subsignal(obj, start, fin)
-            newsig = subsignal@Signal(obj, start, fin);
-            newsig = ECGsignal(newsig.signal, newsig.time);            
-        end
                         
-        function signal = tachogram(obj, type)
+        function signal = tacogram(obj)
+            type = input ("Enter tacogram kind (time or beat driven) : ");
             rs = obj.getRs();
-            signal = Signal();
-            for i=2:length(rs.signal)
-                bpm = 60/(rs.time(i)-rs.time(i-1));
-                if bpm > 200
-                    disp("Anomaly point at : "+num2str(rs.time(i))+" s");
-                else
-                    if type=="time"
-                        signal=signal.append(bpm,rs.time(i));
-                    elseif type == "beat"
-                        signal=signal.append(bpm,i-1);
+            signal = Tacogram();
+            if type=="time"
+                for i=2:length(rs.signal)
+                    bpm = 60/(rs.time(i)-rs.time(i-1));
+                    if bpm > 200
+                        disp("Anomaly point at : "+num2str(rs.time(i))+" s");
                     else
-                        error("Bad type argument")
+                        signal=signal.append(bpm,rs.time(i));
                     end
                 end
-            end             
+            elseif type == "beat"
+                for i=2:length(rs.signal)
+                    bpm = 60/(rs.time(i)-rs.time(i-1));
+                    if bpm > 200
+                        disp("Anomaly point at : "+num2str(rs.time(i))+" s");
+                    else
+                        signal=signal.append(bpm,i-1);
+                    end
+                end            
+            else
+                error("Bad type argument")         
+            end
+            signal.kind = type;
         end
         
         function newsig = getRs(obj)

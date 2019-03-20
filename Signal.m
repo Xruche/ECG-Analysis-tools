@@ -21,6 +21,18 @@ classdef Signal
     %       represent(start, finish) : representation of the signal on a
     %       plot. When providing start and finish it will only display the
     %       signal between the interval of signal numbers.
+    %
+    %       append(sig, time) : adds the signal (sig) and time (time)
+    %       points to the corresponding arrays at the end of them.
+    %
+    %       subsignal (start, fin) : returns a signal of the same class as
+    %       the given only with the data points from star to fin.
+    %
+    %       statistics() : returns mean and st. deviation as [mu, dev].
+    %
+    %       times(vegades) : .* functionality to the signal array.
+    %
+    %       plus(b) : adds b to the signal array.
     
     properties
         signal = []
@@ -85,7 +97,7 @@ classdef Signal
         end
     
         function signal = subsignal(obj, start, fin)
-           signal = Signal(obj.signal(start+1:fin+1), obj.time(start+1:fin+1)); 
+           eval("signal = "+class(obj)+"(obj.signal(start+1:fin+1), obj.time(start+1:fin+1));") 
         end
         
         function [mu, deviation] = statistics (obj)
