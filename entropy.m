@@ -1,7 +1,7 @@
-function s=entropy(senyal)
-h=histogram(senyal,'Normalization','probability');
+function s=entropy(senyal,num)
+h=histogram(senyal,2^num,'Normalization','probability');
 s=0;
 for i = 1:length(h.Values) 
-    s=s+h.Values(i)*log(h.Values(i))/log(2);
+    s=s+h.Values(i)*log2(h.Values(i));
 end
 end
