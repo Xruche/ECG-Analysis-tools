@@ -16,33 +16,23 @@ classdef ECGsignal < Signal
     end
     
     methods
-                        
+        
+        function obj = ECGsignal(signal,time)
+            obj@Signal(signal, time);
+        end
+        
+        
         function signal = tacogram(obj)
-            type = input ("Enter tacogram kind (time or beat driven) : ");
             rs = obj.getRs();
             signal = Tacogram();
-            if type=="time"
-                for i=2:length(rs.signal)
-                    bpm = 60/(rs.time(i)-rs.time(i-1));
-                    if bpm > 200
-                        disp("Anomaly point at : "+num2str(rs.time(i))+" s");
-                    else
-                        signal=signal.append(bpm,rs.time(i));
-                    end
-                end
-            elseif type == "beat"
-                for i=2:length(rs.signal)
-                    bpm = 60/(rs.time(i)-rs.time(i-1));
-                    if bpm > 200
-                        disp("Anomaly point at : "+num2str(rs.time(i))+" s");
-                    else
-                        signal=signal.append(bpm,i-1);
-                    end
-                end            
-            else
-                error("Bad type argument")         
+            for i=2:length(rs.signal)
+                bpm = 60/(rs.time(i)-rs.time(i-1));
+                if bpm > 200
+                    disp("Anomaly point at : "+num2str(rs.time(i))+" s");
+                else
+                    signal=signal.append(bpm,rs.time(i));
+                end        
             end
-            signal.kind = type;
         end
         
         function newsig = getRs(obj)
