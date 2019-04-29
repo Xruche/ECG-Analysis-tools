@@ -21,6 +21,12 @@ classdef ECGsignal < Signal
             obj@Signal(signal, time);
         end
         
+        function represent (obj)
+            plot(obj.time, obj.signal);
+            xlabel('Time(seconds)');
+            ylabel('Signal (mv)');
+            title('ECG signal');
+        end
         
         function signal = tacogram(obj)
             rs = obj.getRs();
@@ -30,7 +36,7 @@ classdef ECGsignal < Signal
                 if bpm > 200
                     disp("Anomaly point at : "+num2str(rs.time(i))+" s");
                 else
-                    signal=signal.append(bpm,rs.time(i));
+                    signal=signal.append(bpm,rs.time(i),(rs.time(i)-rs.time(i-1)));
                 end        
             end
         end
