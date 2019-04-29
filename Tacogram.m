@@ -43,6 +43,33 @@ classdef Tacogram < Signal
             end
         end
         
+        function representR_R(obj)
+            rr = [];
+            for i=2:length(obj.time)
+                rr = [rr, (obj.time(i)-obj.time(i-1))];
+            end
+            t = (obj.time(2:end)-obj.time(2));
+            plot(t,rr);
+        end
+        
+        function FFT (obj)
+            rr = [];
+            for i=2:length(obj.time)
+                rr = [rr, (obj.time(i)-obj.time(i-1))];
+            end
+            Fs = 1000;
+            per = 1/Fs;
+            t = 0:per:obj.time(end)-1;
+            interp = spline(obj.time(2:end), rr, t);
+            Y = fft(interp);
+            L = length(rr);
+            P2 = abs(Y/L);
+            P1 = P2(1:L/2+1);
+            P1(2:end-1) = 2*P1(2:end-1);
+            f = Fs*(0:(L/2))/L;
+            plot(f,P1) 
+        end
+            
     end
 end
 

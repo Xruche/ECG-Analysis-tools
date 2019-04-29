@@ -13,21 +13,43 @@ classdef Tacogram < Signal
     %   include kind in the returned object.
     
     properties
-        kind = ""
-        
+        beat =[]
     end
     
     methods   
+        
+        function obj = Tacogram()
+                obj.signal = [];
+                obj.time = [];
+                obj.beat = [];
+        end
         function new = subsignal(obj, start, fin)
             new = subsignal@Signal(obj,start,fin);
             new.kind = obj.kind; 
         end
         
         function new = poincarePlot(obj,n)
-        x = [obj.signal(n:length(obj.signal)), obj.signal(1:n)]; 
+        x = [obj.signal(n:length(obj.signal)), obj.signal(1:n-1)]; 
         new = PointSpace(obj.signal, x);
         end
         
+        function obj = append(obj, signal, time)
+            obj.signal = [obj.signal, signal];
+            obj.time = [obj.time, time];
+            if length(obj.beat)==0
+                obj.beat = [obj.beat,1];
+            else
+                obj.beat = [obj.beat, obj.beat(length(obj.beat))+1];
+            end
+        end
+        
+        function representR_R(obj)
+            rr = [];
+            for i=2:length(obj.time)
+                rr = [rr, obj.time(i-)]
+            end
+        end
+            
     end
 end
 
