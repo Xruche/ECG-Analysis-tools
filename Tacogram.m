@@ -18,9 +18,16 @@ classdef Tacogram < Signal
     
     methods   
         
-        function obj = Tacogram()
-                obj.signal = []; % valors del interval rr (segons)
-                obj.time = [];   % valors de temps en el que es produeix el batec (el primer batec s'ignora al no poder calcular el temps entre batecs)
+        function obj = Tacogram(signal, time)
+               if and(exist('signal', 'var'),exist('time', 'var'))
+                obj.signal = signal;
+                obj.time = time;
+            elseif xor(exist('signal', 'var'),exist('time','var'))
+                error("Bad argument for signal generation, provide (signal, time) array or none");
+            else
+                obj.signal = [];
+                obj.time = [];
+            end
                 obj.bpm = [];    % valors de bpm en batecs/minut
         end
         
@@ -54,21 +61,19 @@ classdef Tacogram < Signal
         end
         
         function FFT (obj)
-            rr = [];
-            for i=2:length(obj.time)
-                rr = [rr, (obj.time(i)-obj.time(i-1))];
-            end
-            Fs = 1000;
+            Fs = 20;
             per = 1/Fs;
-            t = 0:per:obj.time(end)-1;
-            interp = spline(obj.time(2:end), rr, t);
-            Y = fft(interp);
-            L = length(rr);
-            P2 = abs(Y/L);
-            P1 = P2(1:L/2+1);
-            P1(2:end-1) = 2*P1(2:end-1);
-            f = Fs*(0:(L/2))/L;
-            plot(f,P1) 
+            t = 0:per:obj.time(end);
+            interp = spline(obj.time, obj.signal, t);
+            periodogram(interp,[],[],Fs)
+            %plot(t, interp);
+            %Y = fft(interp);
+            %L = length(interp);
+            %P2 = abs(Y/L);
+            %P1 = P2(1:L/2+1);
+            %P1(2:end-1) = 2*P1(2:end-1);
+            %f = Fs*(0:(L/2))/L;
+            %plot(f,P1) 
         end
         
         function data = stats(obj)
@@ -100,8 +105,9 @@ classdef Tacogram < Signal
             for i =1:number_intervals-1
                 interval_start = interval_end+1;
                 for j=1:(length(obj.time)-1)
-                    if obj.time(j+1)>5*60*interval
+                    if obj.time(j+1)>(5*60*interval)
                         interval_end = j-1;
+                        break;
                     end
                 end
                 interval = interval + 1;
@@ -116,9 +122,13 @@ classdef Tacogram < Signal
             %% Variables geometriques
             edges = [min(rr):(1/128)*1000:max(rr)+(1/128)*1000];
             hist = histogram(rr, edges);
+            title("R-R interval histogram");
+            xlabel ("Duration of R-R interval (ms)");
+            ylabel ("Number of counts")
             HRV = length(rr)/max(hist.Values);
-            
-            data = [mu,SDNN,SDANN,RMSSD,SDDNindex,SDSD,NN50,pNN50,HRV];
+            SD1 =sqrt(0.5*SDSD^2);
+            SD2 = sqrt(2*SDNN^2-0.5*SDSD^2);
+            data = [mu,SDNN,SDANN,RMSSD,SDDNindex,SDSD,NN50,pNN50,HRV,SD1, SD2];
         end
     end
 end

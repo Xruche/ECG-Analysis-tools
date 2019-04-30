@@ -14,11 +14,11 @@ classdef PoincarePlot
         end
         
         function represent(obj)
-            plot(obj.x, obj.y, '*');
-            xlabel('X');
-            ylabel('Y');
+            plot(obj.x*1000, obj.y*1000, '*');
+            xlabel('R-R(ms)');
+            ylabel('R-R(ms)');
             title('Poincare Plot')
-        end
+        end   
     end
 end
 
