@@ -9,5 +9,6 @@ for i=1:length(files)
     signal = ECGsignal(a', time);
     taco = signal.tacogram;
     new = taco.stats;
+    
     total = [total; new];
 end

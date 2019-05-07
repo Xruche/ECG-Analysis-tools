@@ -61,19 +61,22 @@ classdef Tacogram < Signal
         end
         
         function FFT (obj)
-            Fs = 20;
+            s = obj.stats();
+            mu = s(1,1);
+            new_sig = obj.signal-(mu/1000);
+            %plot(obj.time, new_sig);
+            Fs = 10;
             per = 1/Fs;
             t = 0:per:obj.time(end);
-            interp = spline(obj.time, obj.signal, t);
-            periodogram(interp,[],[],Fs)
-            %plot(t, interp);
-            %Y = fft(interp);
-            %L = length(interp);
-            %P2 = abs(Y/L);
-            %P1 = P2(1:L/2+1);
-            %P1(2:end-1) = 2*P1(2:end-1);
-            %f = Fs*(0:(L/2))/L;
-            %plot(f,P1) 
+            interp = spline(obj.time, new_sig, t);
+            wind = hann(length(t));
+            [pxx,w]=pwelch(interp,wind,[],[],Fs);
+            plot(w,pxx);
+            xlim([0,0.5]);
+            vline(0.4,'k','');
+            vline(0.15,'k','HF');
+            vline(0.04,'k','LF');
+            vline(0.003,'k','VLF');
         end
         
         function data = stats(obj)

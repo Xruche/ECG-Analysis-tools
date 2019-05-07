@@ -116,20 +116,6 @@ classdef Signal
             obj.signal = obj.signal*vegades;            
         end
         
-        function e = entropy(obj)
-            senyal=obj.signal;
-            h1=histogram(senyal,8,'Normalization','probability');
-            s=0;
-            for i = 1:length(h1.Values)
-                if h1.Values(i)==0
-                    s=s+0;
-                else
-                    s=s-h1.Values(i)*log2(h1.Values(i));
-                end
-            end
-            e=s;
-        end
-        
         function obj = plus(obj, b)
             if isa(b, 'Signal')
                 obj.signal = obj.signal+b.signal;            
