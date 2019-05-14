@@ -22,13 +22,14 @@ classdef Tacogram < Signal
                if and(exist('signal', 'var'),exist('time', 'var'))
                 obj.signal = signal;
                 obj.time = time;
+                obj.bpm = (signal.^-1)*60;
             elseif xor(exist('signal', 'var'),exist('time','var'))
                 error("Bad argument for signal generation, provide (signal, time) array or none");
             else
                 obj.signal = [];
                 obj.time = [];
-            end
-                obj.bpm = [];    % valors de bpm en batecs/minut
+                obj.bpm = [];
+               end
         end
         
         function new = subsignal(obj, start, fin)
@@ -65,18 +66,22 @@ classdef Tacogram < Signal
             mu = s(1,1);
             new_sig = obj.signal-(mu/1000);
             %plot(obj.time, new_sig);
-            Fs = 10;
+            Fs = 20;
             per = 1/Fs;
             t = 0:per:obj.time(end);
             interp = spline(obj.time, new_sig, t);
             wind = hann(length(t));
             [pxx,w]=pwelch(interp,wind,[],[],Fs);
             plot(w,pxx);
+            xlabel('Frequencia (Hz)');
+            ylabel('PSD (ms^2)');
+            title('Analisi espectral');
             xlim([0,0.5]);
             vline(0.4,'k','');
             vline(0.15,'k','HF');
             vline(0.04,'k','LF');
             vline(0.003,'k','VLF');
+            trapz(w, pxx)*1000000
         end
         
         function data = stats(obj)
